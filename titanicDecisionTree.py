@@ -32,7 +32,7 @@ def main():
     #Need to make up ages, however, for test data that doesn't have an age because we still want to get one
     #So set missing ages to the average age of train data
     avgAge = df['Age'].mean()
-    testDf['Age'].fillna(avgAge, inplace=True)
+    testDf['Age'].fillna(int(avgAge), inplace=True)
 
     # Get labels
     y = df['Survived'].values
@@ -52,6 +52,7 @@ def main():
 
     #Order columns the same
     testDf = testDf[df.columns]
+    testDf = testDf.fillna(df.mean())
 
     x = df
 
@@ -73,6 +74,9 @@ def main():
     #Make predictions
     #Make predicitions on test csv file
     y_pred = decisionTree.predict(testDf)
-    print(y_pred)
+    resultsDf = pd.read_csv('Titanic_Dataset_Accuracy_Test\\DecisionTree_submission_file_template.csv')
+    resultsDf['Survived'] = y_pred
+
+    resultsDf.to_csv('results.csv', index=False)
 
 main()

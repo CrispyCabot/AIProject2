@@ -9,6 +9,7 @@ from sklearn.tree import plot_tree
 def main():
     ''' ### Read csv data '''
     df = pd.read_csv('Titanic_training.csv')
+    testDf = pd.read_csv('Titanic_test.csv')
     print("There are total ", len(df), " sample in the loaded dataset.")
     print("The size of the dataset is: ", df.shape)
 
@@ -20,38 +21,58 @@ def main():
     stringCols = ['Sex', 'Cabin', 'Embarked', 'Ticket']
     #Force strings to be binary
     df = pd.get_dummies(df, prefix=stringCols, columns = stringCols, drop_first=True)
-    #Sex will be converted to Sex_male with 1 meaning male, 0 meaning female
+    testDf = pd.get_dummies(testDf, prefix=stringCols, columns = stringCols, drop_first=True)
 
-    print(df.head())
-    print(df.columns)
+    # print(df.head())
+    # print(df.columns)
 
     #Since we mostly have ages, we are going to just ignore rows with a missing age
     df = df[df['Age'].notna()]
+
+    #Need to make up ages, however, for test data that doesn't have an age because we still want to get one
+    #So set missing ages to the average age of train data
+    avgAge = df['Age'].mean()
+    testDf['Age'].fillna(avgAge, inplace=True)
 
     # Get labels
     y = df['Survived'].values
 
     # Get features
-    # Not using PassengerId, Name, or Survived
-    df.drop(['PassengerId', 'Name', 'Survived', 'Age'], axis=1, inplace=True)
-    #Dropping name because it likely won't be beneficial
+    # Not using PassengerId, Name, or Survived as features
+    df.drop(['PassengerId', 'Name', 'Survived'], axis=1, inplace=True)
+    features = df.columns
+
+    testDf.drop(['PassengerId', 'Name'], axis=1, inplace=True)
+    #Drop all columns in testDf not found to be a feature
+    testDf = testDf[testDf.columns.intersection(features)]
+    #Add all missing feature columns with value of 0
+    for feature in features:
+        if feature not in testDf.columns:
+            testDf[feature] = 0
+
+    #Order columns the same
+    testDf = testDf[df.columns]
+
     x = df
 
-    #Don't need train_test_split because test is in a separate file
+    print("Shape of train x and y")
     print(x.shape, y.shape)
+    print("Shape of test x")
+    print(testDf.shape)
 
     #Create the decision tree
-    decisionTree = DecisionTreeClassifier(max_leaf_nodes=30, random_state=0, max_depth=6)
+    decisionTree = DecisionTreeClassifier(max_leaf_nodes=30, random_state=0, max_depth=6, criterion='entropy')
 
     decisionTree.fit(x, y)
 
-    #Displays the decision tree
+    #Saves the decision tree as a png image so we can easily see it
     plt.figure(figsize=(24, 12))
     plot_tree(decisionTree, fontsize=6, rounded=True)
     plt.savefig('decisiontree.png', bbox_inches="tight")    
 
     #Make predictions
-    #TODO: Make predicitions on test csv file
-    y_pred = decisionTree.predict(x)
+    #Make predicitions on test csv file
+    y_pred = decisionTree.predict(testDf)
+    print(y_pred)
 
 main()

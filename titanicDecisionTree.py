@@ -13,23 +13,29 @@ def main():
     print("The size of the dataset is: ", df.shape)
 
     #Replace missing values with averages
-    imp = SimpleImputer(missing_values=np.nan, strategy='mean')
-    imp.fit(df['Age'])
-    df['Age'] = imp.transform(df['Age'])
+    # imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+    # imp.fit(df['Age'])
+    # df['Age'] = imp.transform(df['Age'])
 
-    stringCols = ['Sex', 'Ticket', 'Cabin', 'Embarked']
+    stringCols = ['Sex', 'Cabin', 'Embarked', 'Ticket']
     #Force strings to be binary
     df = pd.get_dummies(df, prefix=stringCols, columns = stringCols, drop_first=True)
+    #Sex will be converted to Sex_male with 1 meaning male, 0 meaning female
 
     print(df.head())
+    print(df.columns)
+
+    #Since we mostly have ages, we are going to just ignore rows with a missing age
+    df = df[df['Age'].notna()]
 
     # Get labels
     y = df['Survived'].values
 
     # Get features
+    # Not using PassengerId, Name, or Survived
+    df.drop(['PassengerId', 'Name', 'Survived', 'Age'], axis=1, inplace=True)
     #Dropping name because it likely won't be beneficial
-    df.drop('Name', axis=1, inplace=True)
-    x = df.drop('Survived', axis=1).values
+    x = df
 
     #Don't need train_test_split because test is in a separate file
     print(x.shape, y.shape)
@@ -45,12 +51,7 @@ def main():
     plt.savefig('decisiontree.png', bbox_inches="tight")    
 
     #Make predictions
-    # Now that our classifier has been trained, let's make predictions on the test data. To make predictions, the predict method of the DecisionTreeClassifier class is used.
+    #TODO: Make predicitions on test csv file
     y_pred = decisionTree.predict(x)
-
-    # For classification tasks some commonly used metrics are confusion matrix, precision, recall, and F1 score.
-    # These are calculated by using sklearn's metrics library contains the classification_report and confusion_matrix methods
-    # print(confusion_matrix(y_test, y_pred))
-    # print(classification_report(y_test, y_pred))
 
 main()

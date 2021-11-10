@@ -24,8 +24,6 @@ def main():
     df = pd.get_dummies(df, prefix=stringCols, columns = stringCols, drop_first=True)
     testDf = pd.get_dummies(testDf, prefix=stringCols, columns = stringCols, drop_first=True)
 
-    print(df['Sex_male'])
-
     # print(df.head())
     # print(df.columns)
 

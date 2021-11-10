@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.impute import SimpleImputer
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.tree import plot_tree
 
 def main():
@@ -20,8 +18,13 @@ def main():
 
     stringCols = ['Sex', 'Cabin', 'Embarked', 'Ticket']
     #Force strings to be binary
+    #This essentially converts string features into many features but binary
+    #e.g. the string C85 will be turned into a feature, Cabin_C85 with the value 1
+    #indicating it is C85 while everything else will have the value 0
     df = pd.get_dummies(df, prefix=stringCols, columns = stringCols, drop_first=True)
     testDf = pd.get_dummies(testDf, prefix=stringCols, columns = stringCols, drop_first=True)
+
+    print(df['Sex_male'])
 
     # print(df.head())
     # print(df.columns)

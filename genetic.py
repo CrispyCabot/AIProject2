@@ -13,7 +13,7 @@ import random
 from random import randint
 
 # number of offsprings, you can change it according to your preferences
-OFFSPRING_AMT = 1
+OFFSPRING_AMT = 10
 # step size to stop the code for running infinite loops, you can change it according to your preferences
 MAX_STEPS = 100
 

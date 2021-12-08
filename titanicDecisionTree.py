@@ -63,9 +63,15 @@ def main():
     print(testDf.shape)
 
     #Create the decision tree
-    decisionTree = DecisionTreeClassifier(max_leaf_nodes=30, random_state=0, max_depth=6, criterion='entropy')
+    decisionTree = DecisionTreeClassifier(max_leaf_nodes=60, random_state=0, max_depth=10, criterion='entropy')
 
     decisionTree.fit(x, y)
+
+    tree = decisionTree.tree_
+
+    print('Total nodes: ' + str(tree.node_count))
+    print('Leaves: ' + str(decisionTree.get_n_leaves()))
+    print('Depth: ' + str(decisionTree.get_depth()))
 
     #Saves the decision tree as a png image so we can easily see it
     plt.figure(figsize=(24, 12))
@@ -74,6 +80,7 @@ def main():
 
     #Make predictions
     #Make predicitions on test csv file
+    print(decisionTree.score(x, y))
     y_pred = decisionTree.predict(testDf)
     resultsDf = pd.read_csv('Titanic_Dataset_Accuracy_Test\\DecisionTree_submission_file_template.csv')
     resultsDf['Survived'] = y_pred

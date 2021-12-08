@@ -30,9 +30,11 @@ def main():
 
     # Now that our classifier has been trained, let's make predictions on the test data. To make predictions, the predict method of the DecisionTreeClassifier class is used.
     y_pred = model.predict(x_test)
+    print('Train accuracy: ' + str(model.score(x_train, y_train)))
+    print('Test accuracy: ' + str(model.score(x_test, y_test)))
 
     # For classification tasks some commonly used metrics are confusion matrix, precision, recall, and F1 score.
     # These are calculated by using sklearn's metrics library contains the classification_report and confusion_matrix methods
-    print(confusion_matrix(y_test, y_pred))
-    print(classification_report(y_test, y_pred))
+    # print(confusion_matrix(y_test, y_pred))
+    # print(classification_report(y_test, y_pred))
 main()
